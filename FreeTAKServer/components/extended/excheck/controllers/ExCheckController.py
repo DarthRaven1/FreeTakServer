@@ -113,6 +113,10 @@ class ExCheckController:
         # if not sanitize_path_input(subscription):
         #     return "invalid subscription sent", 500
 
+        if '../' in uid or '..\\' in uid:
+            raise Exception('Invalid file path')
+        if '../' in subscription or '..\\' in subscription:
+            raise Exception('Invalid file path')
         with open(str(PurePath(Path(config.ExCheckChecklistFilePath), Path(f'{uid}.xml'))), 'w+') as file:
             file.write(str(open(str(PurePath(Path(config.ExCheckFilePath), Path(f'{subscription}.xml'))), 'r').read()))
             file.close()
@@ -176,6 +180,8 @@ class ExCheckController:
         # TODO implement proper sanitation
         # if not sanitize_path_input(checklistid):
         #     return "invalid checklistid sent", 500
+        if '../' in checklistid or '..\\' in checklistid:
+            raise Exception('Invalid file path')
         return str(open(str(PurePath(Path(config.ExCheckChecklistFilePath), Path(checklistid + '.xml'))), 'r').read())
 
     def updatetemplate(self, checklistid, taskid, pipe):
@@ -196,6 +202,8 @@ class ExCheckController:
                 tasks.insert(index, updatedTask)
             else:
                 pass
+        if '../' in checklistid or '..\\' in checklistid:
+            raise Exception('Invalid file path')
         with open(
                 str(PurePath(Path(config.ExCheckChecklistFilePath), Path(checklistid + '.xml'))), 'w+') as file:
             file.write(etree.tostring(xml).decode())
