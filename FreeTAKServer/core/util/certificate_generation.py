@@ -58,13 +58,21 @@ def revoke_certificate(username, revoked_file=None, ca_pem = config.CA, ca_key =
     from datetime import datetime
 
     data = {}
+    if "../" in ca_pem or "..\\" in ca_pem:
+        raise Exception("Invalid file path")
     certificate = crypto.load_certificate(crypto.FILETYPE_PEM, open(ca_pem, mode="rb").read())
+    if "../" in ca_key or "..\\" in ca_key:
+        raise Exception("Invalid file path")
     private_key = crypto.load_privatekey(crypto.FILETYPE_PEM, open(ca_key, mode="r").read())
     if crl_path and os.path.exists(crl_path):
+    if "../" in crl_path or "..\\" in crl_path:
+        raise Exception("Invalid file path")
         crl = crypto.load_crl(crypto.FILETYPE_PEM, open(crl_path, mode="rb").read())
     else:
         crl = crypto.CRL()
         if revoked_file and os.path.exists(revoked_file):
+    if "../" in revoked_file or "..\\" in revoked_file:
+        raise Exception("Invalid file path")
             with open(revoked_file, 'r') as json_file:
                 data = json.load(json_file)
 
@@ -83,15 +91,23 @@ def revoke_certificate(username, revoked_file=None, ca_pem = config.CA, ca_key =
         crl.add_revoked(revoked)
     crl.sign(certificate, private_key, b"sha256")
     if revoked_file:
+    if "../" in revoked_file or "..\\" in revoked_file:
+        raise Exception("Invalid file path")
         with open(revoked_file, 'w+') as json_file:
             json.dump(data, json_file)
 
+    if "../" in crl_file or "..\\" in crl_file:
+        raise Exception("Invalid file path")
     with open(crl_file, 'wb') as f:
         f.write(crl.export(cert=certificate, key=private_key, digest=b"sha256"))
 
     delete = 0
+    if "../" in ca_pem or "..\\" in ca_pem:
+        raise Exception("Invalid file path")
     with open(ca_pem, "r") as f:
         lines = f.readlines()
+    if "../" in ca_pem or "..\\" in ca_pem:
+        raise Exception("Invalid file path")
     with open(ca_pem, "w") as f:
         for line in lines:
             if delete:
@@ -101,6 +117,8 @@ def revoke_certificate(username, revoked_file=None, ca_pem = config.CA, ca_key =
             else:
                 delete = 1
 
+    if "../" in ca_pem or "..\\" in ca_pem:
+        raise Exception("Invalid file path")
     with open(ca_pem, "ab") as f:
         f.write(crl.export(cert=certificate, key=private_key, digest=b"sha256"))
 
@@ -120,6 +138,8 @@ def send_data_package(server: str, dp_name: str = "user.zip") -> bool:
             file_hash.update(fb)
             fb = f.read(block_size)
 
+    if "../" in dp_name or "..\\" in dp_name:
+        raise Exception("Invalid file path")
     with open(dp_name, 'rb') as f:
         s = requests.Session()
         r = s.post(f'http://{server}:8080/Marti/sync/missionupload?hash={file_hash.hexdigest()}'
@@ -422,6 +442,8 @@ class AtakOfTheCerts:
         else:
             print("Generating Key...")
             self.key.generate_key(crypto.TYPE_RSA, 2048)
+    if "../" in keypath or "..\\" in keypath:
+        raise Exception("Invalid file path")
             f = open(keypath, "wb")
             f.write(crypto.dump_privatekey(crypto.FILETYPE_PEM, self.key))
             f.close()
@@ -459,12 +481,16 @@ class AtakOfTheCerts:
             p12.set_certificate(cert)
             p12.set_ca_certificates(tuple(chain))
             p12data = p12.export(passphrase=bytes(self.CERTPWD, encoding='UTF-8'))
+    if "../" in p12path or "..\\" in p12path:
+        raise Exception("Invalid file path")
             with open(p12path, 'wb') as p12file:
                 p12file.write(p12data)
 
             if os.path.exists(pempath):
                 print("Certificate File Exists, aborting.")
             else:
+    if "../" in pempath or "..\\" in pempath:
+        raise Exception("Invalid file path")
                 f = open(pempath, "wb")
                 f.write(crypto.dump_certificate(crypto.FILETYPE_PEM, cert))
                 f.close()

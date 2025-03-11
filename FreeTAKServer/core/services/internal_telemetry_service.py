@@ -57,6 +57,8 @@ class InternalTelemetryService:
 
     def save_log_entry(self, log_entry: dict, log_path: str):
         """save a given entry to a given path"""
+        if "../" in log_path or "..\\" in log_path:
+            raise Exception("Invalid file path")
         fp = open(log_path, mode="a")
         json.dump(log_entry, fp)
         fp.close()

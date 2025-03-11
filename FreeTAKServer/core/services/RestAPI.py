@@ -483,8 +483,10 @@ def addSystemUser(jsondata):
                 import os
 
                 dp_directory = str(PurePath(Path(config.DataPackageFilePath)))
-                openfile = open(str(PurePath(Path(str(config.ClientPackages), cert_name + '.zip'))),
-                                mode='rb')
+                filepath = str(PurePath(Path(str(config.ClientPackages), cert_name + '.zip')))
+                if "../" in filepath or "..\\" in filepath:
+                    raise Exception("Invalid file path")
+                openfile = open(filepath, mode='rb')
                 file_hash = str(hashlib.sha256(openfile.read()).hexdigest())
                 openfile.close()
                 newDirectory = str(PurePath(Path(dp_directory), Path(file_hash)))
