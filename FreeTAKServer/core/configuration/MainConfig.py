@@ -414,6 +414,8 @@ class MainConfig:
     # at the startup of the FTS server.
     def read_yaml_config(self, yaml_path):
         try:
+            if '../' in yaml_path or '..\\' in yaml_path:
+                raise Exception('Invalid file path')
             content = open(yaml_path).read()
             yamlConfig = yaml.safe_load(content)
         except OSError as e:

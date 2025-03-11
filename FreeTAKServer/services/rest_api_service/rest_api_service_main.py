@@ -418,6 +418,8 @@ def addSystemUser(jsondata):
                 import shutil
                 import os
                 dp_directory = str(PurePath(Path(config.DataPackageFilePath)))
+                if '../' in cert_name or '..\\' in cert_name:
+                    raise Exception('Invalid file path')
                 openfile = open(str(PurePath(Path(str(config.ClientPackages), cert_name + '.zip'))),
                                 mode='rb')
                 

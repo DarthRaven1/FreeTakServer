@@ -114,6 +114,8 @@ class ExCheckController:
         #     return "invalid subscription sent", 500
 
         with open(str(PurePath(Path(config.ExCheckChecklistFilePath), Path(f'{uid}.xml'))), 'w+') as file:
+            if "../" in subscription or "..\\" in subscription:
+                raise Exception("Invalid file path")
             file.write(str(open(str(PurePath(Path(config.ExCheckFilePath), Path(f'{subscription}.xml'))), 'r').read()))
             file.close()
 
@@ -176,6 +178,8 @@ class ExCheckController:
         # TODO implement proper sanitation
         # if not sanitize_path_input(checklistid):
         #     return "invalid checklistid sent", 500
+        if "../" in checklistid or "..\\" in checklistid:
+            raise Exception("Invalid file path")
         return str(open(str(PurePath(Path(config.ExCheckChecklistFilePath), Path(checklistid + '.xml'))), 'r').read())
 
     def updatetemplate(self, checklistid, taskid, pipe):
@@ -197,6 +201,8 @@ class ExCheckController:
             else:
                 pass
         with open(
+                if "../" in checklistid or "..\\" in checklistid:
+                    raise Exception("Invalid file path")
                 str(PurePath(Path(config.ExCheckChecklistFilePath), Path(checklistid + '.xml'))), 'w+') as file:
             file.write(etree.tostring(xml).decode())
             file.close()
@@ -214,6 +220,8 @@ class ExCheckController:
         object.detail.mission.MissionChanges.MissionChange.type.setINTAG("ADD_CONTENT")
         object.detail.mission.MissionChanges.MissionChange.contentResource.filename.setINTAG(taskid + '.xml')
         object.detail.mission.MissionChanges.MissionChange.contentResource.hash.setINTAG(str(hashlib.sha256(
+            if "../" in checklistid or "..\\" in checklistid:
+                raise Exception("Invalid file path")
             str(open(config.ExCheckChecklistFilePath + '/' + checklistid + '.xml', 'r')).encode()).hexdigest()))
         object.detail.mission.MissionChanges.MissionChange.contentResource.keywords.setINTAG('Task')
         object.detail.mission.MissionChanges.MissionChange.contentResource.name.setINTAG(taskid)
@@ -337,6 +345,8 @@ class ExCheckController:
                     xml = etree.fromstring(XMI)
                     path = str(PurePath(Path(config.ExCheckFilePath),
                             Path(f'{object.data.uid}.xml')))
+                    if "../" in path or "..\\" in path:
+                        raise Exception("Invalid file path")
                     with open(path, 'w+') as file:
                         file.write(XMI)
                         file.close()

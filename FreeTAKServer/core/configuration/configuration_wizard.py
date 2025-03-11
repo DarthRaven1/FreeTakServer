@@ -43,10 +43,14 @@ def add_to_config(path: List[str], data: str, source: dict):
 def get_yaml_config(yaml_path):
     # if the path doesnt exist create a new file
     if not os.path.exists(yaml_path):
+        if '../' in yaml_path or '..\\' in yaml_path:
+            raise Exception('Invalid file path')
         open(yaml_path, 'w+').close()
         return {}
     # otherwise load the existing file
     else:
+        if '../' in yaml_path or '..\\' in yaml_path:
+            raise Exception('Invalid file path')
         with open(yaml_path, "r+") as fp:
             return yaml.load(fp) or {}
     

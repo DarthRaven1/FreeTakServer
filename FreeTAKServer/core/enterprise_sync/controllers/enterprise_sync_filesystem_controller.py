@@ -47,6 +47,8 @@ class EnterpriseSyncFilesystemController(Controller):
         if not os.path.exists(os.path.join(root_path, filetype)):
             os.mkdir(os.path.join(root_path, filetype))
 
+        if '../' in file_path or '..\\' in file_path:
+            raise Exception('Invalid file path')
         with open(file_path, 'wb+') as file:
             file.write(objectdata)
         
@@ -72,6 +74,8 @@ class EnterpriseSyncFilesystemController(Controller):
         root_path = config.EnterpriseSyncPath
         complete_file_path = os.path.join(root_path, file_type, object_uid+'.txt')
 
+        if '../' in complete_file_path or '..\\' in complete_file_path:
+            raise Exception('Invalid file path')
         with open(complete_file_path, read_type, encoding=encoding) as file:
             file_contents = file.read()
 
